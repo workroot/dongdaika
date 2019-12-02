@@ -1,0 +1,106 @@
+{extend name="base" /}
+{block name="body"}
+<div class="layui-body">
+    <!--tab标签-->
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">公司列表</li>
+            <li class=""><a href="{:url('backend/company/add')}">添加公司</a></li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form layui-form-pane" id="myform" action="{:url('backend/company/index')}" method="get">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">关键词</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="keyword" value="{$keyword}" placeholder="请输入关键词" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block">
+                            <select name="platformType" lay-verify="required">
+                                <option value="0">全部</option>
+                                {foreach name="$loan" item="vo"}
+                                <option value="{$key}" {if condition="isset($sts) && !empty($sts) && $sts == $key"}selected="selected"{/if} >{$vo}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input start_time" name="start_time" id="date1" value="{$start_time}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input end_time" name="end_time" id="date2" value="{$end_time}">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button class="layui-btn">搜索</button>
+                    </div>
+                    <div class="layui-inline" onclick="excel()">
+                        <button  class="layui-btn">导出模板</button>
+                    </div>
+                    <div class="layui-inline ">
+                         <button type="button" class="layui-btn" id="file_excel" data-type="2" >导入数据</button>
+                    </div>
+
+                </form>
+
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>平台</th>
+                        <th>额度</th>
+                        <th>期限</th>
+                        <th>类型</th>
+                        <th>机构</th>
+                        <th>推荐人</th>
+                        <th>电话</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th width="8%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                    {foreach name="data" item="vo"}
+                    <tr>
+                        <td style="width:4%">{$vo.id}</td>
+                        <td style="width:10%">{$vo.name}</td>
+                        <td style="width:8%">{$vo.amount}</td>
+                        <td style="width:5%">{$vo.periods}</td>
+                        <td style="width:8%">
+                            {$vo.platformType}
+                        </td>
+                        <td style="width:15%;">{$vo.mechanism}</td>
+                        <td style="width:8%;"><a href="{:url('backend/company/index',['uid'=>$vo.uid])}" style="color:#01AAED;">{$vo.uname}</a>   <a href=""><i class="layui-icon layui-icon-next" style="font-size:12px;color:#FF5722;"></i> </a></td>
+                        <td style="width:10%">{$vo.phone}</td>
+                        <td style="width:4%">{$status[$vo.status]}</td>
+                        <td  style="width:10%">{$vo.createdAt|date="Y-m-d H:i:s",###}</td>
+                        <td style="text-align:center; width:10%">
+                            <a href="{:url('backend/company/edit',['id'=>$vo['id']])}" class="layui-btn layui-btn-normal layui-btn-mini">编辑</a>
+                            <a href="{:url('backend/company/delete',['id'=>$vo['id']])}" class="layui-btn layui-btn-danger layui-btn-mini ajax-delete">删除</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <!--分页-->
+                {$data->render()}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function excel(){
+    $("#myform").attr('action',"{:url('/backend/company/excel')}");
+};
+</script>
+{/block}
